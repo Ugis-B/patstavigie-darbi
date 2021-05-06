@@ -1,50 +1,80 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render
+from django.views.generic import View, ListView
 from user.models import User
+from django.http import HttpRequest, HttpResponse
 
+# def index(request):
+#
+#     users = User.objects.all()
+#
+#     context = {
+#         'users': users,
+#     }
+#
+#     return render(
+#         template_name='index.html',
+#         request=request,
+#         context=context,
+#     )
 
-def index(request):
-
-    users = User.objects.all()
-
-    context = {
-        'users': users,
-    }
-
-    return render(
-        template_name='index.html',
-        request=request,
-        context=context,
-    )
-
-
-def add_user(request):
-
-    if request.method == 'POST':
-
-        user = User(
-            username=request.POST['name'],
-            email=request.POST['email'],
-        )
-
-        user.save()
-
-        context = {
-            'user': user,
-        }
-
+class AddUserView(View):
+    def get(self,request):
         return render(
             template_name='user.html',
             request=request,
-            context=context,
-
+            # context=context,
         )
+    def post(self,request):
+            user = User(
+                username=request.POST['name'],
+                email=request.POST['email'],
+            )
 
-    return render(
-        template_name='form.html',
-        request=request
-    )
+            user.save()
 
+            context = {
+                'user': user,
+            }
 
+            return render(
+                template_name='form.html',
+                request=request,
+                context=context,
+
+            )
+
+class UserListView(ListView):
+    model = User
+    template_name = 'index.html'
+
+# def add_user(request):
+# #
+#     if request.method == 'POST':
+#
+#         user = User(
+#             username=request.POST['name'],
+#             email=request.POST['email'],
+#         )
+#
+#         user.save()
+#
+#         context = {
+#             'user': user,
+#         }
+#
+#         return render(
+#             template_name='user.html',
+#             request=request,
+#             context=context,
+#
+#         )
+#
+#     return render(
+#         template_name='form.html',
+#         request=request
+#     )
+#
+#
 def get_user(request, user_id):
 
     user = User.objects.get(pk=user_id)
